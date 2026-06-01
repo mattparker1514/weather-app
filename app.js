@@ -50,9 +50,15 @@
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit`;
 
         const res = await fetch(url);
+        if (!res.ok) {
+          throw new Error(`Weather API request failed: ${res.status}`);
+        }
         const data = await res.json();
 
         // Bug: no check if current_weather exists
+        if (!data?.current_weather) {
+          throw new Error("Weather API response missing current_weather");
+        }
         const temp = data.current_weather.temperature;
         const wind = data.current_weather.windspeed;
 
